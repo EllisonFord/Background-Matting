@@ -1,6 +1,14 @@
+# TODO:1 Make CUDA optional
+# TODO:2 Run this program in MC organised folders
+
 from __future__ import print_function
 
-import os, glob, time, argparse, pdb, cv2
+import os
+import glob
+import time
+import argparse
+import pdb
+import cv2
 # import matplotlib.pyplot as plt
 import numpy as np
 from skimage.measure import label
@@ -125,23 +133,23 @@ for i in range(0, len(test_imgs)):
         multi_fr_w[..., 3] = multi_fr_w[..., 0]
 
     # crop tightly
-    bgr_img0 = bgr_img;
+    bgr_img0 = bgr_img
     bbox = get_bbox(rcnn, R=bgr_img0.shape[0], C=bgr_img0.shape[1])
 
     crop_list = [bgr_img, bg_im0, rcnn, back_img10, back_img20, multi_fr_w]
     crop_list = crop_images(crop_list, reso, bbox)
-    bgr_img = crop_list[0];
-    bg_im = crop_list[1];
-    rcnn = crop_list[2];
-    back_img1 = crop_list[3];
-    back_img2 = crop_list[4];
+    bgr_img = crop_list[0]
+    bg_im = crop_list[1]
+    rcnn = crop_list[2]
+    back_img1 = crop_list[3]
+    back_img2 = crop_list[4]
     multi_fr = crop_list[5]
 
     # process segmentation mask
     kernel_er = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (3, 3))
     kernel_dil = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (5, 5))
-    rcnn = rcnn.astype(np.float32) / 255;
-    rcnn[rcnn > 0.2] = 1;
+    rcnn = rcnn.astype(np.float32) / 255
+    rcnn[rcnn > 0.2] = 1
     K = 25
 
     zero_id = np.nonzero(np.sum(rcnn, axis=1) == 0)
