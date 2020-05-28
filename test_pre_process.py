@@ -60,7 +60,7 @@ def adjustExposure(img, back, mask):
     kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (3, 3))
     mask = cv2.dilate(mask, kernel, iterations=10)
     mask1 = cv2.dilate(mask, kernel, iterations=300)
-    msk = mask1.astype(np.float32) / 255 - mask.astype(np.float32) / 255;
+    msk = mask1.astype(np.float32) / 255 - mask.astype(np.float32) / 255
     msk = msk.astype(np.bool)
 
     back_tr = back
@@ -78,10 +78,10 @@ def bias_gain(orgR, capR, cap_mask):
     xR = capR[cap_mask]
     yR = orgR[cap_mask]
 
-    gainR = np.nanstd(yR) / np.nanstd(xR);
-    biasR = np.nanmean(yR) - gainR * np.nanmean(xR);
+    gainR = np.nanstd(yR) / np.nanstd(xR)
+    biasR = np.nanmean(yR) - gainR * np.nanmean(xR)
 
-    cap_tran = capR * gainR + biasR;
+    cap_tran = capR * gainR + biasR
 
     return cap_tran.astype('float32')
 
@@ -93,7 +93,7 @@ args = parser.parse_args()
 
 dir_name = args.input_dir
 
-list_im = glob.glob(dir_name + '/*_img.png');
+list_im = glob.glob(dir_name + '/*_img.png')
 list_im.sort()
 
 for i in range(0, len(list_im)):

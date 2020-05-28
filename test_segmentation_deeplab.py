@@ -110,7 +110,7 @@ parser.add_argument('-i', '--input_dir', type=str, required=True,
                     help='Directory to save the output results. (required)')
 args = parser.parse_args()
 
-dir_name = args.input_dir;
+dir_name = args.input_dir
 
 ## setup ####################
 

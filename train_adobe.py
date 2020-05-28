@@ -91,13 +91,13 @@ KK = len(train_loader)
 
 for epoch in range(0, args.epoch):
 
-    net.train();
+    net.train()
 
     netL, alL, fgL, fg_cL, al_fg_cL, elapse_run, elapse = 0, 0, 0, 0, 0, 0, 0
 
-    t0 = time.time();
-    testL = 0;
-    ct_tst = 0;
+    t0 = time.time()
+    testL = 0
+    ct_tst = 0
     for i, data in enumerate(train_loader):
         # Initiating
 

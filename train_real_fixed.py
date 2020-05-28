@@ -104,12 +104,12 @@ KK = len(train_loader)
 wt = 1
 for epoch in range(0, args.epoch):
 
-    netG.train();
+    netG.train()
     netD.train()
 
     lG, lD, GenL, DisL_r, DisL_f, alL, fgL, compL, elapse_run, elapse = 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 
-    t0 = time.time();
+    t0 = time.time()
 
     for i, data in enumerate(train_loader):
         # Initiating
@@ -168,7 +168,7 @@ for epoch in range(0, args.epoch):
 
         ##Train Discriminator
 
-        fake_response = netD(image_sh);
+        fake_response = netD(image_sh)
         real_response = netD(image)
 
         loss_ganD_fake = GAN_loss(fake_response, label_type=False)
