@@ -3,7 +3,7 @@
 # segmentations. Also takes a path of background videos. Creates a training CSV file with lines of the following format,
 # by using all but the last 80 frames of each video and iterating repeatedly over the background frames as needed.
 
-#$image;$captured_back;$segmentation;$image+20frames;$image+2*20frames;$image+3*20frames;$image+4*20frames;$target_back
+# $image;$captured_back;$segmentation;$image+20frames;$image+2*20frames;$image+3*20frames;$image+4*20frames;$target_back
 
 path = "/path/to/Captured_Data/fixed-camera/train"
 background_path = "/path/to/Captured_Data/background"
@@ -24,11 +24,11 @@ for i, video in enumerate(tqdm(videos)):
     code = os.system(f"ffmpeg -i {video}.mp4 {video}/%04d_img.png -hide_banner > prepare_real_logs.txt 2>&1")
     if code != 0:
         exit(code)
-    print(f"Dumped frames for {video} ({i+1}/{len(videos)})")
+    print(f"Dumped frames for {video} ({i + 1}/{len(videos)})")
     code = os.system(f"python test_segmentation_deeplab.py -i {video} > prepare_real_logs.txt 2>&1")
     if code != 0:
         exit(code)
-    print(f"Segmented {video} ({i+1}/{len(videos)})")
+    print(f"Segmented {video} ({i + 1}/{len(videos)})")
 
 print(f"Dumping frames for {background_path} background videos")
 for i, background in enumerate(tqdm(backgrounds)):
@@ -36,7 +36,7 @@ for i, background in enumerate(tqdm(backgrounds)):
     code = os.system(f"ffmpeg -i {background}.MOV {background}/%04d_img.png -hide_banner > /dev/null 2>&1")
     if code != 0:
         exit(code)
-    print(f"Dumped frames for {background} ({i+1}/{len(videos)})")
+    print(f"Dumped frames for {background} ({i + 1}/{len(videos)})")
 
 print(f"Creating CSV")
 background_frames = []
