@@ -6,9 +6,11 @@ import skimage
 from skimage import io
 import numpy as np
 import matplotlib.pyplot as plt
-import pdb, random
+import pdb
 from torch.utils.data import Dataset, DataLoader
-import random, os, cv2
+import random
+import os
+import cv2
 
 unknown_code = 128
 
@@ -41,17 +43,17 @@ class VideoData(Dataset):
             seg = cv2.flip(seg, 1)
             back = cv2.flip(back, 1)
             back_rnd = cv2.flip(back_rnd, 1)
-            fr1 = cv2.flip(fr1, 1);
-            fr2 = cv2.flip(fr2, 1);
-            fr3 = cv2.flip(fr3, 1);
+            fr1 = cv2.flip(fr1, 1)
+            fr2 = cv2.flip(fr2, 1)
+            fr3 = cv2.flip(fr3, 1)
             fr4 = cv2.flip(fr4, 1)
 
         # make frames together
         multi_fr = np.zeros((img.shape[0], img.shape[1], 4))
-        multi_fr[..., 0] = fr1;
-        multi_fr[..., 1] = fr2;
-        multi_fr[..., 2] = fr3;
-        multi_fr[..., 3] = fr4;
+        multi_fr[..., 0] = fr1
+        multi_fr[..., 1] = fr2
+        multi_fr[..., 2] = fr3
+        multi_fr[..., 3] = fr4
 
         # allow random cropping centered on the segmentation map
         bbox = create_bbox(seg, seg.shape[0], seg.shape[1])
@@ -133,14 +135,14 @@ class AdobeDataAffineHR(Dataset):
             # Create motion cues: transform foreground and create 4 additional images
             affine_fr = np.zeros((fg.shape[0], fg.shape[1], 4))
             for t in range(0, 4):
-                T = np.random.normal(0, 5, (2, 1));
-                theta = np.random.normal(0, 7);
+                T = np.random.normal(0, 5, (2, 1))
+                theta = np.random.normal(0, 7)
                 R = np.array([[np.cos(np.deg2rad(theta)), -np.sin(np.deg2rad(theta))],
                               [np.sin(np.deg2rad(theta)), np.cos(np.deg2rad(theta))]])
-                sc = np.array([[1 + np.random.normal(0, 0.05), 0], [0, 1]]);
+                sc = np.array([[1 + np.random.normal(0, 0.05), 0], [0, 1]])
                 sh = np.array([[1, np.random.normal(0, 0.05) * (np.random.random_sample() > 0.5)],
-                               [np.random.normal(0, 0.05) * (np.random.random_sample() > 0.5), 1]]);
-                A = np.concatenate((sc * sh * R, T), axis=1);
+                               [np.random.normal(0, 0.05) * (np.random.random_sample() > 0.5), 1]])
+                A = np.concatenate((sc * sh * R, T), axis=1)
 
                 fg_tr = cv2.warpAffine(fg.astype(np.uint8), A, (fg.shape[1], fg.shape[0]), flags=cv2.INTER_LINEAR,
                                        borderMode=cv2.BORDER_REFLECT)
@@ -170,8 +172,8 @@ class AdobeDataAffineHR(Dataset):
 def create_seg_guide(rcnn, reso):
     kernel_er = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (3, 3))
     kernel_dil = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (5, 5))
-    rcnn = rcnn.astype(np.float32) / 255;
-    rcnn[rcnn > 0.2] = 1;
+    rcnn = rcnn.astype(np.float32) / 255
+    rcnn[rcnn > 0.2] = 1
     K = 25
 
     zero_id = np.nonzero(np.sum(rcnn, axis=1) == 0)
@@ -221,7 +223,7 @@ def create_seg(alpha, trimap):
 
 
 def apply_crop(img, bbox, reso):
-    img_crop = img[bbox[0]:bbox[0] + bbox[2], bbox[1]:bbox[1] + bbox[3], ...];
+    img_crop = img[bbox[0]:bbox[0] + bbox[2], bbox[1]:bbox[1] + bbox[3], ...]
     img_crop = cv2.resize(img_crop, reso)
     return img_crop
 
@@ -231,7 +233,7 @@ def create_bbox(mask, R, C):
     x1, y1 = np.amin(where, axis=1)
     x2, y2 = np.amax(where, axis=1)
 
-    w = np.maximum(y2 - y1, x2 - x1);
+    w = np.maximum(y2 - y1, x2 - x1)
     bd = np.random.uniform(0.1, 0.4)
     x1 = x1 - np.round(bd * w)
     y1 = y1 - np.round(bd * w)
@@ -248,9 +250,9 @@ def create_bbox(mask, R, C):
 
 
 def composite(fg, bg, a):
-    fg = fg.astype(np.float32);
-    bg = bg.astype(np.float32);
-    a = a.astype(np.float32);
+    fg = fg.astype(np.float32)
+    bg = bg.astype(np.float32)
+    a = a.astype(np.float32)
     alpha = np.expand_dims(a / 255, axis=2)
     im = alpha * fg + (1 - alpha) * bg
     im = im.astype(np.uint8)
@@ -265,8 +267,8 @@ def add_noise(back, mean, sigma):
     # gauss = np.repeat(gauss[:, :, np.newaxis], ch, axis=2)
     noisy = back + gauss
 
-    noisy[noisy < 0] = 0;
-    noisy[noisy > 255] = 255;
+    noisy[noisy < 0] = 0
+    noisy[noisy > 255] = 255
 
     return noisy.astype(np.uint8)
 

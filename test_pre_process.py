@@ -1,5 +1,8 @@
 import numpy as np
-import cv2, pdb, glob, argparse
+import cv2
+import pdb
+import glob
+import argparse
 
 MAX_FEATURES = 500
 GOOD_MATCH_PERCENT = 0.15

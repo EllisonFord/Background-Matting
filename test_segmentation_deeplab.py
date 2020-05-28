@@ -6,7 +6,10 @@ from six.moves import urllib
 
 import numpy as np
 from PIL import Image
-import cv2, pdb, glob, argparse
+import cv2
+import pdb
+import glob
+import argparse
 
 import tensorflow as tf
 

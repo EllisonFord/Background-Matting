@@ -51,10 +51,10 @@ def crop_images(crop_list, reso, bbox):
     for i in range(0, len(crop_list)):
         img = crop_list[i]
         if img.ndim >= 3:
-            img_crop = img[bbox[0]:bbox[0] + bbox[2], bbox[1]:bbox[1] + bbox[3], ...];
+            img_crop = img[bbox[0]:bbox[0] + bbox[2], bbox[1]:bbox[1] + bbox[3], ...]
             img_crop = cv2.resize(img_crop, reso)
         else:
-            img_crop = img[bbox[0]:bbox[0] + bbox[2], bbox[1]:bbox[1] + bbox[3]];
+            img_crop = img[bbox[0]:bbox[0] + bbox[2], bbox[1]:bbox[1] + bbox[3]]
             img_crop = cv2.resize(img_crop, reso)
         crop_list[i] = img_crop
 
