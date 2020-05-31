@@ -16,14 +16,20 @@ from skimage.measure import label
 import torch
 import torch.nn as nn
 from torch.autograd import Variable
+from torch import cuda
 import torch.backends.cudnn as cudnn
 
 from functions import *
 from networks import ResnetConditionHR
 
-torch.set_num_threads(1)
-# os.environ["CUDA_VISIBLE_DEVICES"]="4"
-print('CUDA Device: ' + os.environ["CUDA_VISIBLE_DEVICES"])
+from multiprocessing import cpu_count
+
+torch.set_num_threads(cpu_count()-2)
+
+
+if cuda.is_available():
+    os.environ["CUDA_VISIBLE_DEVICES"] = "4"
+    print('CUDA Device: ' + os.environ["CUDA_VISIBLE_DEVICES"])
 
 """Parses arguments."""
 parser = argparse.ArgumentParser(description='Background Matting.')
@@ -64,8 +70,13 @@ fo = glob.glob(model_main_dir + 'netG_epoch_*')
 model_name1 = fo[0]
 netM = ResnetConditionHR(input_nc=(3, 3, 1, 4), output_nc=4, n_blocks1=7, n_blocks2=3)
 netM = nn.DataParallel(netM)
-netM.load_state_dict(torch.load(model_name1))
-netM.cuda()
+netM.load_state_dict(torch.load(model_name1, map_location=torch.device('cpu')))
+
+if cuda.is_available():
+    netM.cuda()
+else:
+    netM.cpu()
+
 netM.eval()
 cudnn.benchmark = True
 reso = (512, 512)  # input reoslution to the network
@@ -176,13 +187,22 @@ for i in range(0, len(test_imgs)):
     multi_fr = 2 * multi_fr.float().div(255) - 1
 
     with torch.no_grad():
-        img, bg, rcnn_al, multi_fr = Variable(img.cuda()), Variable(bg.cuda()), Variable(rcnn_al.cuda()), Variable(
-            multi_fr.cuda())
+
+        if cuda.is_available():
+            img, bg, rcnn_al, multi_fr = Variable(img.cuda()), Variable(bg.cuda()), Variable(rcnn_al.cuda()), Variable(
+                multi_fr.cuda())
+        else:
+            img, bg, rcnn_al, multi_fr = Variable(img.cpu()), Variable(bg.cpu()), Variable(rcnn_al.cpu()), Variable(
+                multi_fr.cpu())
+
         input_im = torch.cat([img, bg, rcnn_al, multi_fr], dim=1)
 
         alpha_pred, fg_pred_tmp = netM(img, bg, rcnn_al, multi_fr)
 
-        al_mask = (alpha_pred > 0.95).type(torch.cuda.FloatTensor)
+        if cuda.is_available():
+            al_mask = (alpha_pred > 0.95).type(torch.FloatTensor)
+        else:
+            al_mask = (alpha_pred > 0.95).type(torch.FloatTensor)
 
         # for regions with alpha>0.95, simply use the image as fg
         fg_pred = img * al_mask + fg_pred_tmp * (1 - al_mask)
