@@ -158,7 +158,7 @@ print('model loaded successfully!')
 #######################################################################################
 
 
-list_im = glob.glob(dir_name + '/*_img.png');
+list_im = glob.glob(dir_name + '/*_img.png')
 list_im.sort()
 
 for i in range(0, len(list_im)):

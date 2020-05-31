@@ -1,19 +1,19 @@
-# TODO:1 Make CUDA optional
+
 # TODO:2 Run this program in MC organised folders
 
 from __future__ import print_function
 
 import os
 import glob
-import time
+#import time
 import argparse
-import pdb
-import cv2
+#import pdb
+#import cv2
 # import matplotlib.pyplot as plt
-import numpy as np
+#import numpy as np
 from skimage.measure import label
 
-import torch
+#import torch
 import torch.nn as nn
 from torch.autograd import Variable
 from torch import cuda
@@ -24,8 +24,7 @@ from networks import ResnetConditionHR
 
 from multiprocessing import cpu_count
 
-torch.set_num_threads(cpu_count()-2)
-
+torch.set_num_threads(cpu_count() - 2)
 
 if cuda.is_available():
     os.environ["CUDA_VISIBLE_DEVICES"] = "4"
@@ -74,11 +73,11 @@ netM.load_state_dict(torch.load(model_name1, map_location=torch.device('cpu')))
 
 if cuda.is_available():
     netM.cuda()
+    cudnn.benchmark = True
 else:
     netM.cpu()
 
 netM.eval()
-cudnn.benchmark = True
 reso = (512, 512)  # input reoslution to the network
 
 # load captured background for video mode, fixed camera
